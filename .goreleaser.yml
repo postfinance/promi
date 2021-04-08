@@ -1,0 +1,39 @@
+project_name: promcli
+release:
+    disable: true
+builds:
+    - id: promcli
+      goos:
+        - linux
+      goarch:
+        - amd64
+      main: ./cmd/promcli/
+      binary: promcli
+      env:
+        - CGO_ENABLED=0
+nfpms:
+    - file_name_template: '{{ .ProjectName }}-{{ .Version }}.{{ .Arch }}'
+      package_name: promcli
+      replacements:
+        "386": 32bit
+        amd64: x86_64
+        arm: ARM
+        arm64: ARM64
+        darwin: macOS
+        dragonfly: DragonFlyBSD
+        freebsd: FreeBSD
+        linux: Linux
+        netbsd: NetBSD
+        openbsd: OpenBSD
+        windows: Windows
+      formats:
+        - deb
+        - rpm
+      vendor: Die Schweizerische Post - PostFinance
+      homepage: https://github.com//postfinance/promcli
+      maintainer: Rene Zbinden <rene.zbinden@postfinance.ch>
+      description: 'CLI to query targets and alerts of multiple prometheus servers.'
+      license: Die Schweizerische Post - PostFinance
+      bindir: /usr/bin
+snapshot:
+    name_template: '{{ .Version }}-{{ .Env.PROJECT_RELEASE }}'

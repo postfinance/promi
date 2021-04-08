@@ -29,8 +29,8 @@ func main() {
 
 	app := kong.Parse(&cli, king.DefaultOptions(
 		king.Config{
-			Name:        "discovery",
-			Description: "TBD",
+			Name:        "promcli",
+			Description: "CLI to query targets and alerts of multiple prometheus servers.",
 			BuildInfo:   b,
 		},
 	)...)
