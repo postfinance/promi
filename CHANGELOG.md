@@ -1,3 +1,13 @@
+## 0.1.2 (2021-04-12)
+
+
+### Bug Fixes
+
+* **common**: health color in table output (4e45916ba86c1223c137717f5f3d81da043eb890)
+* **targets**: allow to filter by `unknown` health status (d43ba4518842fb745484266fef39f4a8ce718163)
+
+
+
 ## 0.1.1 (2021-04-12)
 
 
