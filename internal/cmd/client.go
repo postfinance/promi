@@ -11,8 +11,8 @@ import (
 // CLI is the client command.
 type CLI struct {
 	Globals
-	Alerts  alertCmd  `cmd:"" help:"Show alert status." aliases:"a"`
-	Targets targetCmd `cmd:"" help:"Show target status."`
+	Alerts  alertCmd  `cmd:"" help:"Show alerts." aliases:"a"`
+	Targets targetCmd `cmd:"" help:"Show targets." aliases:"t"`
 }
 
 // Globals are the global client flags.
