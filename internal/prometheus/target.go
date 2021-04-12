@@ -44,11 +44,15 @@ func (t Target) Header() []string {
 
 // Row represents a target row.
 func (t Target) Row() []string {
-	health := string(t.Health)
+	health := t.Health
 	col := color.New(color.FgRed).SprintFunc()
 
-	if health == "up" {
+	if health == v1.HealthBad {
 		col = color.New(color.FgGreen).SprintFunc()
+	}
+
+	if health == v1.HealthUnknown {
+		col = color.New(color.FgYellow).SprintFunc()
 	}
 
 	return []string{t.Server, t.Job(), t.ScrapeURL, time.Since(t.LastScrape).String(), t.Labels.String(), t.ActiveTarget.LastError, col(string(t.Health))}

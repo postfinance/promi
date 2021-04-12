@@ -33,7 +33,7 @@ func New(urls ...string) (*Client, error) {
 			return nil, err
 		}
 
-		client.clients[parsed.Hostname()] = v1.NewAPI(c)
+		client.clients[parsed.Hostname()+":"+parsed.Port()] = v1.NewAPI(c)
 	}
 
 	return &client, nil

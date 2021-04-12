@@ -33,7 +33,7 @@ func (a Alert) Header() []string {
 func (a Alert) Row() []string {
 	col := color.New(color.FgRed).SprintFunc()
 
-	if a.State == "pending" {
+	if a.State == v1.AlertStatePending {
 		col = color.New(color.FgYellow).SprintFunc()
 	}
 
