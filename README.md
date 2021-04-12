@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/postfinance/procli)](https://goreportcard.com/report/github.com/postfinance/promcli)
+[![Go Report Card](https://goreportcard.com/badge/github.com/postfinance/promcli)](https://goreportcard.com/report/github.com/postfinance/promcli)
 [![Coverage Status](https://coveralls.io/repos/github/postfinance/promcli/badge.svg)](https://coveralls.io/github/postfinance/promcli)
 [![Build Status](https://github.com/postfinance/promcli/workflows/build/badge.svg)](https://github.com/postfinance/promcli/actions)
 
