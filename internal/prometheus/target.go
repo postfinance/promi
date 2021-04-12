@@ -45,10 +45,10 @@ func (t Target) Header() []string {
 // Row represents a target row.
 func (t Target) Row() []string {
 	health := t.Health
-	col := color.New(color.FgRed).SprintFunc()
+	col := color.New(color.FgGreen).SprintFunc()
 
 	if health == v1.HealthBad {
-		col = color.New(color.FgGreen).SprintFunc()
+		col = color.New(color.FgRed).SprintFunc()
 	}
 
 	if health == v1.HealthUnknown {
