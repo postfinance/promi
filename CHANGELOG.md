@@ -1,3 +1,12 @@
+## 0.1.1 (2021-04-12)
+
+
+### Bug Fixes
+
+* **common**: enable github release (f2665c73ebc0d5198de6742098d933cc8e2822b3)
+
+
+
 ## 0.1.0 (2021-04-12)
 
 
