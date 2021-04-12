@@ -35,5 +35,3 @@ nfpms:
       description: 'CLI to query targets and alerts of multiple prometheus servers.'
       license: Die Schweizerische Post - PostFinance
       bindir: /usr/bin
-snapshot:
-    name_template: '{{ .Version }}-{{ .Env.PROJECT_RELEASE }}'
