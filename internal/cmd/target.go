@@ -61,7 +61,7 @@ func (t targetCmd) Run(g *Globals, l *zap.SugaredLogger, app *kong.Context) erro
 type targetFilter struct {
 	Name      string          `short:"N" help:"Filter targets by job name (regular expression)."`
 	Server    string          `short:"S" help:"Filter targets by promehteus server name (regular expression)."`
-	ScrapeURL string          `short:"u" help:"Filter targets by scrape url (regular expression)."`
+	ScrapeURL string          `short:"e" help:"Filter targets by scrape endpoint url (regular expression)."`
 	Health    v1.HealthStatus `short:"H" help:"Filter targets by health (up|down)" enum:"up,down,unknown,"`
 	Selector  string          `short:"s" help:"Filter services by (k8s style) selector."`
 }
