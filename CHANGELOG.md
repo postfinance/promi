@@ -1,3 +1,12 @@
+## 0.1.3 (2021-04-20)
+
+
+### Bug Fixes
+
+* **common**: use '-e' as short flag for `--filter-scrape-url` flag (b22c8ebb7c23eccffcb93af1abeb07cd00433ed4)
+
+
+
 ## 0.1.2 (2021-04-12)
 
 
