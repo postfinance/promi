@@ -1,4 +1,4 @@
-project_name: promcli
+project_name: promi
 release:
   github:
     owner: postfinance
