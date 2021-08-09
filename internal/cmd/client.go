@@ -13,6 +13,7 @@ type CLI struct {
 	Globals
 	Alerts  alertCmd  `cmd:"" help:"Show alerts." aliases:"a"`
 	Targets targetCmd `cmd:"" help:"Show targets." aliases:"t"`
+	Server  serverCmd `cmd:"" help:"Start a web server running the Prometheus React UI."`
 }
 
 // Globals are the global client flags.
@@ -21,7 +22,7 @@ type Globals struct {
 	ShowConfig     king.ShowConfig  `help:"Show used config files"`
 	Version        king.VersionFlag `help:"Show version information"`
 	Debug          bool             `short:"d" help:"Show debug output." `
-	Timeout        time.Duration    `help:"The http request timeout." default:"10s"`
+	Timeout        time.Duration    `help:"The http request timeout." default:"20s"`
 }
 
 func (g Globals) client() (*prometheus.Client, error) {

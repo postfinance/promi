@@ -23,7 +23,6 @@ type Targets []Target
 
 // Target is prometheus Target.
 type Target struct {
-	Server string
 	v1.ActiveTarget
 }
 
@@ -55,20 +54,48 @@ func (t Target) Row() []string {
 		col = color.New(color.FgYellow).SprintFunc()
 	}
 
-	return []string{t.Server, t.Job(), t.ScrapeURL, time.Since(t.LastScrape).String(), t.Labels.String(), t.ActiveTarget.LastError, col(string(t.Health))}
+	server := string(t.Labels["scraper"])
+
+	return []string{server, t.Job(), t.ScrapeURL, time.Since(t.LastScrape).String(), t.Labels.String(), t.ActiveTarget.LastError, col(string(t.Health))}
 }
 
-// Targets returns all active targets.
-func (c Client) Targets(ctx context.Context) (Targets, error) {
+// Targets returns all active targets. If appendScraperAsTarget is true the scraper status
+// is added to the active targets and all errors accessing scrapers are ignored.
+func (c Client) Targets(ctx context.Context, appendScraperAsTarget bool) (Targets, error) {
 	g, ctx := errgroup.WithContext(ctx)
 	results := make(chan result, len(c.clients))
 
 	for server, client := range c.clients {
-		client := client // https://golang.org/doc/faq#closures_and_goroutines
+		client := client
 		server := server
 
 		g.Go(func() error {
+			start := time.Now()
 			r, err := client.Targets(ctx)
+			if appendScraperAsTarget {
+				a := v1.ActiveTarget{
+					ScrapeURL:  server,
+					ScrapePool: "aa_scraper",
+					GlobalURL:  server,
+					Labels: model.LabelSet{
+						"instance": model.LabelValue(server),
+					},
+					DiscoveredLabels:   map[string]string{},
+					LastScrape:         start,
+					LastScrapeDuration: time.Since(start).Seconds(),
+					Health:             v1.HealthGood,
+				}
+
+				if err != nil {
+					a.Health = v1.HealthBad
+					a.LastError = err.Error()
+				}
+
+				r.Active = append(r.Active, a)
+
+				err = nil // ingoring errors if we append scrapers as targets
+			}
+
 			if err != nil {
 				return err
 			}
@@ -91,9 +118,17 @@ func (c Client) Targets(ctx context.Context) (Targets, error) {
 	targets := Targets{}
 
 	for r := range results {
-		for _, activeTarget := range r.target.Active {
+		for i := range r.target.Active {
+			activeTarget := r.target.Active[i]
+			if activeTarget.Labels["job"] != "scrapers" {
+				activeTarget.Labels["scraper"] = model.LabelValue(r.server)
+			}
+
+			if err := activeTarget.Labels.Validate(); err != nil {
+				return nil, err
+			}
+
 			target := Target{
-				Server:       r.server,
 				ActiveTarget: activeTarget,
 			}
 
@@ -129,7 +164,7 @@ func (t Targets) Filter(filters ...TargetFilterFunc) Targets {
 // TargetByServer filters Targets by prometheus server.
 func TargetByServer(r *regexp.Regexp) TargetFilterFunc {
 	return func(t Target) bool {
-		return r.MatchString(t.Server)
+		return r.MatchString(string(t.Labels["scraper"]))
 	}
 }
 
@@ -170,7 +205,7 @@ func (t Targets) Sort() {
 		case 1:
 			return false
 		}
-		switch strings.Compare(t[i].Server, t[j].Server) {
+		switch strings.Compare(string(t[i].Labels["scraper"]), string(t[j].Labels["scraper"])) {
 		case -1:
 			return true
 		case 1:
@@ -186,6 +221,42 @@ func (t Targets) Compact() {
 		t[i].Labels = model.LabelSet{}
 		t[i].LastError = ""
 	}
+}
+
+// Active returns the active targets.
+func (t Targets) Active() []*v1.ActiveTarget {
+	active := []*v1.ActiveTarget{}
+
+	for i := range t {
+		active = append(active, &t[i].ActiveTarget)
+	}
+
+	return active
+}
+
+// Deduplicate deduplicates targets by scrape url. If identical targets
+// have different health status, then HealthBad status has highest priority.
+func (t Targets) Deduplicate() Targets {
+	m := map[string]Target{}
+
+	for i := range t {
+		target := t[i]
+		if tg, ok := m[target.ScrapeURL]; ok {
+			if target.Health == tg.Health || tg.Health == v1.HealthBad {
+				continue
+			}
+		}
+
+		m[target.ScrapeURL] = target
+	}
+
+	targets := make(Targets, 0, len(m))
+
+	for s := range m {
+		targets = append(targets, m[s])
+	}
+
+	return targets
 }
 
 func (t Target) labels() k8sLabels {

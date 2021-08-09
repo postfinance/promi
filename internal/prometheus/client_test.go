@@ -23,7 +23,7 @@ func TestTarget(t *testing.T) {
 
 	cli, err := New(s1.URL, s2.URL)
 	require.NoError(t, err)
-	targets, err := cli.Targets(context.Background())
+	targets, err := cli.Targets(context.Background(), false)
 	require.NoError(t, err)
 
 	t.Run("the number of targets must be 4", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestTarget(t *testing.T) {
 		m := map[string]bool{}
 
 		for _, target := range targets {
-			m[target.Server] = true
+			m[string(target.Labels["scraper"])] = true
 		}
 
 		assert.Len(t, m, 2)
@@ -73,7 +73,7 @@ func TestAlert(t *testing.T) {
 		m := map[string]bool{}
 
 		for _, target := range alerts {
-			m[target.Server] = true
+			m[string(target.Labels["scraper"])] = true
 		}
 
 		assert.Len(t, m, 2)

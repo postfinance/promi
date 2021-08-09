@@ -7,6 +7,7 @@ import (
 
 	"github.com/fatih/color"
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
+	"github.com/prometheus/common/model"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -20,7 +21,6 @@ type Alerts []Alert
 
 // Alert is a prometheus alert with a server.
 type Alert struct {
-	Server string
 	v1.Alert
 }
 
@@ -37,7 +37,7 @@ func (a Alert) Row() []string {
 		col = color.New(color.FgYellow).SprintFunc()
 	}
 
-	return []string{a.Server, a.Job(), a.Name(), time.Since(a.ActiveAt).String(), col(string(a.State))}
+	return []string{string(a.Labels["scraper"]), a.Job(), a.Name(), time.Since(a.ActiveAt).String(), col(string(a.State))}
 }
 
 // Job returns the job label value.
@@ -85,7 +85,7 @@ func (a Alerts) Filter(filters ...AlertFilterFunc) Alerts {
 // AlertByServer filters Alerts by prometheus server.
 func AlertByServer(r *regexp.Regexp) AlertFilterFunc {
 	return func(a Alert) bool {
-		return r.MatchString(a.Server)
+		return r.MatchString(string(a.Labels["scraper"]))
 	}
 }
 
@@ -144,9 +144,14 @@ func (c Client) Alerts(ctx context.Context) (Alerts, error) {
 
 	for r := range results {
 		for _, a := range r.alert.Alerts {
+			a.Labels["scraper"] = model.LabelValue(r.server)
+
+			if err := a.Labels.Validate(); err != nil {
+				return nil, err
+			}
+
 			alert := Alert{
-				Server: r.server,
-				Alert:  a,
+				Alert: a,
 			}
 			alerts = append(alerts, alert)
 		}

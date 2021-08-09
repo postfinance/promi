@@ -29,7 +29,7 @@ func (t targetCmd) Run(g *Globals, l *zap.SugaredLogger, app *kong.Context) erro
 	ctx, cancel := context.WithTimeout(context.Background(), g.Timeout)
 	defer cancel()
 
-	targets, err := c.Targets(ctx)
+	targets, err := c.Targets(ctx, false)
 	if err != nil {
 		return err
 	}

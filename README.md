@@ -17,6 +17,26 @@ prometheus-urls:
     - http://prometheus103.example.com
 ```
 
+Or you can create an environment variable:
+
+```console
+export PROMI_PROMETHEUS_URLS=http://prometheus101.example.com,http://prometheus102.example.com,http://prometheus103.example.com
+```
+
+## Web UI
+If you run the command:
+
+```console
+$ promi server
+```
+
+and point your browser to http://localhost:8080 you get the official prometheus web ui with all consolidated targets. The source code
+is taken from prometheus [react-app](https://github.com/prometheus/prometheus/tree/main/web/ui/react-app). Only the targets endpoint work and
+the classic ui is omitted.
+
+If multiple prometheus servers scrape the same endpoint you can run the server with the option `--deduplicate`.
+
+## CLI
 To list all targets run:
 
 ```console

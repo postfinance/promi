@@ -37,3 +37,21 @@ nfpms:
       description: 'CLI and Web UI to view targets and alerts of multiple prometheus servers.'
       license: Die Schweizerische Post - PostFinance
       bindir: /usr/bin
+dockers:
+    - ids:
+        - promi
+      goos: linux
+      goarch: amd64
+      dockerfile: packaging/docker/Dockerfile
+      image_templates:
+        - 'postfinance/promi:{{ .Major }}.{{ .Minor }}.{{ .Patch }}'
+        - 'postfinance/promi:{{ .Major }}.{{ .Minor }}'
+        - 'postfinance/promi:{{ .Major }}'
+        - 'postfinance/promi:latest'
+      extra_files:
+        - packaging/docker/docker-entrypoint.sh
+      build_flag_templates:
+        - --label=org.opencontainers.image.version={{ .Version }}
+        - --label=org.opencontainers.image.revision={{ .ShortCommit }}
+        - --label=org.opencontainers.image.created={{ .Date }}
+        - --label=org.opencontainers.image.vendor=PostFinance AG
