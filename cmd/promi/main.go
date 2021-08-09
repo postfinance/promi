@@ -21,7 +21,6 @@ func main() {
 	b, err := king.NewBuildInfo(version,
 		king.WithDateString(date),
 		king.WithRevision(commit),
-		king.WithLocation("Europe/Zurich"),
 	)
 	if err != nil {
 		l.Fatal(err)
