@@ -12,6 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// API represents the server API.
 type API struct {
 	router        chi.Router
 	reactApp      http.FileSystem
@@ -55,6 +56,7 @@ func New(l *zap.SugaredLogger, timeout time.Duration, deduplicate bool, urls ...
 	return &a, nil
 }
 
+// Start starts the server.
 func (a *API) Start() error {
 	if err := a.routes(); err != nil {
 		return err
