@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/alecthomas/kong"
 	"github.com/postfinance/flash"
-	"github.com/postfinance/promcli/internal/cmd"
+	"github.com/postfinance/promi/internal/cmd"
 	"github.com/zbindenren/king"
 )
 
@@ -29,7 +29,7 @@ func main() {
 
 	app := kong.Parse(&cli, king.DefaultOptions(
 		king.Config{
-			Name:        "promcli",
+			Name:        "promi",
 			Description: "CLI to query targets and alerts of multiple prometheus servers.",
 			BuildInfo:   b,
 		},

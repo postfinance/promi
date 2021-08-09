@@ -1,4 +1,4 @@
-module github.com/postfinance/promcli
+module github.com/postfinance/promi
 
 go 1.16
 

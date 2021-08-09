@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/alecthomas/kong"
-	"github.com/postfinance/promcli/internal/prometheus"
+	"github.com/postfinance/promi/internal/prometheus"
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/zbindenren/sfmt"
 	"go.uber.org/zap"

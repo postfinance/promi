@@ -2,20 +2,20 @@ project_name: promcli
 release:
   github:
     owner: postfinance
-    name: promcli
+    name: promi
 builds:
-    - id: promcli
+    - id: promi
       goos:
         - linux
       goarch:
         - amd64
-      main: ./cmd/promcli/
-      binary: promcli
+      main: ./cmd/promi/
+      binary: promi
       env:
         - CGO_ENABLED=0
 nfpms:
     - file_name_template: '{{ .ProjectName }}-{{ .Version }}.{{ .Arch }}'
-      package_name: promcli
+      package_name: promi
       replacements:
         "386": 32bit
         amd64: x86_64
@@ -34,6 +34,6 @@ nfpms:
       vendor: Die Schweizerische Post - PostFinance
       homepage: https://github.com//postfinance/promcli
       maintainer: Rene Zbinden <rene.zbinden@postfinance.ch>
-      description: 'CLI to query targets and alerts of multiple prometheus servers.'
+      description: 'CLI and Web UI to view targets and alerts of multiple prometheus servers.'
       license: Die Schweizerische Post - PostFinance
       bindir: /usr/bin

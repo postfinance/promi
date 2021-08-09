@@ -4,7 +4,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/postfinance/promcli/internal/prometheus"
+	"github.com/postfinance/promi/internal/prometheus"
 	"github.com/zbindenren/king"
 )
 
