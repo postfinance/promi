@@ -37,7 +37,7 @@ func (a Alert) Row() []string {
 		col = color.New(color.FgYellow).SprintFunc()
 	}
 
-	return []string{string(a.Labels["scraper"]), a.Job(), a.Name(), time.Since(a.ActiveAt).String(), col(string(a.State))}
+	return []string{string(a.Labels[sourceLabelName]), a.Job(), a.Name(), time.Since(a.ActiveAt).String(), col(string(a.State))}
 }
 
 // Job returns the job label value.
@@ -85,7 +85,7 @@ func (a Alerts) Filter(filters ...AlertFilterFunc) Alerts {
 // AlertByServer filters Alerts by prometheus server.
 func AlertByServer(r *regexp.Regexp) AlertFilterFunc {
 	return func(a Alert) bool {
-		return r.MatchString(string(a.Labels["scraper"]))
+		return r.MatchString(string(a.Labels[sourceLabelName]))
 	}
 }
 
@@ -144,7 +144,7 @@ func (c Client) Alerts(ctx context.Context) (Alerts, error) {
 
 	for r := range results {
 		for _, a := range r.alert.Alerts {
-			a.Labels["scraper"] = model.LabelValue(r.server)
+			a.Labels[sourceLabelName] = model.LabelValue(r.server)
 
 			if err := a.Labels.Validate(); err != nil {
 				return nil, err

@@ -34,7 +34,7 @@ func TestTarget(t *testing.T) {
 		m := map[string]bool{}
 
 		for _, target := range targets {
-			m[string(target.Labels["scraper"])] = true
+			m[string(target.Labels[sourceLabelName])] = true
 		}
 
 		assert.Len(t, m, 2)
@@ -73,7 +73,7 @@ func TestAlert(t *testing.T) {
 		m := map[string]bool{}
 
 		for _, target := range alerts {
-			m[string(target.Labels["scraper"])] = true
+			m[string(target.Labels[sourceLabelName])] = true
 		}
 
 		assert.Len(t, m, 2)

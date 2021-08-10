@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	jobLabelName = "job"
+	jobLabelName    = "job"
+	sourcesJobName  = "promi_scrape_sources"
+	sourceLabelName = "promi_scrape_src"
 )
 
 // Targets is a slice of prometheus targets.
@@ -54,7 +56,7 @@ func (t Target) Row() []string {
 		col = color.New(color.FgYellow).SprintFunc()
 	}
 
-	server := string(t.Labels["scraper"])
+	server := string(t.Labels[sourceLabelName])
 
 	return []string{server, t.Job(), t.ScrapeURL, time.Since(t.LastScrape).String(), t.Labels.String(), t.ActiveTarget.LastError, col(string(t.Health))}
 }
@@ -75,7 +77,7 @@ func (c Client) Targets(ctx context.Context, appendScraperAsTarget bool) (Target
 			if appendScraperAsTarget {
 				a := v1.ActiveTarget{
 					ScrapeURL:  server,
-					ScrapePool: "aa_scraper",
+					ScrapePool: sourcesJobName,
 					GlobalURL:  server,
 					Labels: model.LabelSet{
 						"instance": model.LabelValue(server),
@@ -120,8 +122,8 @@ func (c Client) Targets(ctx context.Context, appendScraperAsTarget bool) (Target
 	for r := range results {
 		for i := range r.target.Active {
 			activeTarget := r.target.Active[i]
-			if activeTarget.Labels["job"] != "scrapers" {
-				activeTarget.Labels["scraper"] = model.LabelValue(r.server)
+			if activeTarget.ScrapePool != sourcesJobName {
+				activeTarget.Labels[sourceLabelName] = model.LabelValue(r.server)
 			}
 
 			if err := activeTarget.Labels.Validate(); err != nil {
@@ -164,7 +166,7 @@ func (t Targets) Filter(filters ...TargetFilterFunc) Targets {
 // TargetByServer filters Targets by prometheus server.
 func TargetByServer(r *regexp.Regexp) TargetFilterFunc {
 	return func(t Target) bool {
-		return r.MatchString(string(t.Labels["scraper"]))
+		return r.MatchString(string(t.Labels[sourceLabelName]))
 	}
 }
 
@@ -205,7 +207,7 @@ func (t Targets) Sort() {
 		case 1:
 			return false
 		}
-		switch strings.Compare(string(t[i].Labels["scraper"]), string(t[j].Labels["scraper"])) {
+		switch strings.Compare(string(t[i].Labels[sourceLabelName]), string(t[j].Labels[sourceLabelName])) {
 		case -1:
 			return true
 		case 1:
@@ -236,13 +238,17 @@ func (t Targets) Active() []*v1.ActiveTarget {
 
 // Deduplicate deduplicates targets by scrape url. If identical targets
 // have different health status, then HealthBad status has highest priority.
+// Multiple sources are appended in the sourceLabelName label.
 func (t Targets) Deduplicate() Targets {
 	m := map[string]Target{}
 
 	for i := range t {
 		target := t[i]
 		if tg, ok := m[target.ScrapeURL]; ok {
+			tg.addSource(target.getSource())
+
 			if target.Health == tg.Health || tg.Health == v1.HealthBad {
+				target.addSource(tg.getSource())
 				continue
 			}
 		}
@@ -283,4 +289,27 @@ func (l k8sLabels) Has(key string) bool {
 // Get gets the value for key.
 func (l k8sLabels) Get(key string) string {
 	return string(l.LabelSet[model.LabelName(key)])
+}
+
+func (t Target) addSource(src string) {
+	s := string(t.Labels[sourceLabelName])
+
+	if s == "" || src == "" || strings.Contains(s, src) {
+		return
+	}
+
+	l := []string{s}
+	if strings.Contains(s, ",") {
+		l = strings.Split(s, ",")
+	}
+
+	l = append(l, src)
+
+	sort.Strings(l)
+
+	t.Labels[sourceLabelName] = model.LabelValue(strings.Join(l, ","))
+}
+
+func (t Target) getSource() string {
+	return string(t.Labels[sourceLabelName])
 }
