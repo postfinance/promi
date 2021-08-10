@@ -1,11 +1,14 @@
 package prometheus
 
 import (
+	"fmt"
+	"net/url"
 	"testing"
 
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDeduplicate(t *testing.T) {
@@ -106,5 +109,17 @@ func TestDeduplicate(t *testing.T) {
 	}
 
 	assert.Equal(t, expected, dedup)
+
+}
+
+func TestRene(t *testing.T) {
+	s := "www.reen.ch:7002"
+
+	u, err := url.ParseRequestURI(s)
+	require.NoError(t, err)
+
+	fmt.Println(u.Hostname())
+	fmt.Println(u.Host)
+	fmt.Printf("%#v", u)
 
 }

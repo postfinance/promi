@@ -69,3 +69,31 @@ func (a *API) Start() error {
 
 	return httpSrv.ListenAndServe()
 }
+
+type status string
+
+const (
+	statusSuccess status = "success"
+	statusError   status = "error"
+)
+
+type errorType string
+
+const (
+	errorNone        errorType = ""
+	errorTimeout     errorType = "timeout"
+	errorCanceled    errorType = "canceled"
+	errorExec        errorType = "execution"
+	errorBadData     errorType = "bad_data"
+	errorInternal    errorType = "internal"
+	errorUnavailable errorType = "unavailable"
+	errorNotFound    errorType = "not_found"
+)
+
+type response struct {
+	Status    status      `json:"status"`
+	Data      interface{} `json:"data,omitempty"`
+	ErrorType errorType   `json:"errorType,omitempty"`
+	Error     string      `json:"error,omitempty"`
+	Warnings  []string    `json:"warnings,omitempty"`
+}
