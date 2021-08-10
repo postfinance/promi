@@ -1,3 +1,20 @@
+## 0.2.0 (2021-08-10)
+
+
+### Bug Fixes
+
+* **common**: do not set timezone (db0e792f1268fb561bcab1375308e5cf6df0d339)
+* **common**: make the linter happy (c8672675fc6ed05ddf75fdff2254a8305f4d042e)
+* **goreleaser**: set project name to promi (002333a23d9bd1cff9b5dea81611a2228951073a)
+
+
+### New Features
+
+* **common**: add prometheus react web view (128900fea42adb665ec64b7c5e35028220d4996a)
+* **common**: append prometheus sources to promi_src label on deduplication (9ec354af523902899f51a7f9e23fdc50393dc33b)
+
+
+
 ## 0.1.3 (2021-04-20)
 
 
